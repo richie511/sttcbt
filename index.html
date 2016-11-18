@@ -1,0 +1,416 @@
+<html>
+<head>
+	<title>
+		CBT STT DUMAI
+	</title>
+	<script src="jquery.js"></script>
+	<script src="noRightClick.js"></script>
+	<script src="wow.min.js"></script>
+	<link href="login.css" rel="stylesheet" type="text/css" />
+	<style>
+		html {
+			height: 100%;
+			box-sizing: border-box;
+		}
+
+		*,
+		*:before,
+		*:after {
+			box-sizing: inherit;
+		}
+
+		body {
+			position: relative;
+			margin: 0;
+			padding-bottom: 6rem;
+			min-height: 100%;
+			font-family: "Helvetica Neue", Arial, sans-serif;
+		}
+
+		.konten {
+			margin: 0 auto;
+			padding-top: 64px;
+			max-width: 640px;
+			width: 94%;
+		}
+
+		.konten h1 {
+			margin-top: 0;
+		}
+
+		/**
+			* Footer Styles
+			*/
+		.footer {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			padding: 1rem;
+			background-color: #1342D8;
+			color: #ffffff;
+			text-align: center;
+		}
+		.header {
+			position: absolute;
+			right: 0;
+			top: 0;
+			left: 0;
+			padding: 1rem;
+			background-color: #1342D8;
+			color: #ffffff;
+			text-align: center;
+			z-index:-1;
+		}
+		.back1 {
+			position: absolute;
+			top: 0;
+			left: 0;
+			padding: 1rem;
+		}
+		#tabel_ujian {
+			font-size : 19px;
+			font-family : arial;
+		}
+		#home {
+			text-align: center;
+		}
+		#back1 {
+			display : none;
+		}
+	</style>
+	<script>
+	
+		$(document).ready(function(){
+			
+		})
+		function main() {
+			home();
+		}
+		function tampil_soal() {
+			//$("#back1").show();
+			$("#loginform").hide();
+			var NIM = $("#NIM").val();
+			window.localStorage.setItem("NIM", NIM);
+			var password = $("#password").val();
+			window.localStorage.setItem("password", password);
+			var NIM = window.localStorage.getItem("NIM");
+			var password = window.localStorage.getItem("password");
+			$.ajax({
+					type : "POST",
+					url  : "http://localhost/kasih/login_andro.php?",
+					data : "NIM="+NIM+"&password="+password,
+					success : function(data){
+						if (data == "ada") {
+							home();
+						}
+						else {
+							alert('User Tidak ditemukan');
+							$("#loginform").show();
+							$("#tabel_ujian").hide();
+						}
+					},
+					error : function(){
+						alert();
+					}
+				})
+		}
+		function home() {
+			$("#timer").hide();
+			$("#loginform").hide();
+			var NIM = window.localStorage.getItem("NIM");
+			$("#home").html("<p><h1>DAFTAR UJIAN</h1></p>");
+			$.ajax({
+					url  : "http://localhost/kasih/tabel_jadwal.php?",
+					success : function(data){
+						$("#tabel_ujian").html(data);
+					},
+					error : function(){
+						alert();
+					}
+				})
+		}
+		function soal(e,m,n) {
+			$("#back1").hide();
+			$("#timer").show();
+			$("#loginform").hide();
+			$("#home").html("<p><h1>SOAL</h1></p>");
+			window.localStorage.setItem("id_ujian", e);
+			var limit = 0;
+			window.localStorage.setItem("limit", limit);
+			var limit = window.localStorage.getItem("limit");
+			var NIM = window.localStorage.getItem("NIM");
+			$.ajax({
+					type : "POST",
+					url  : "http://localhost/kasih/tabel_ujian1.php?",
+					data : "id_ujian="+e+"&limit="+limit+"&NIM="+NIM,
+					success : function(data){
+						$("#tabel_ujian").html(data);
+						starttime(m,n);
+					},
+					error : function(){
+						alert();
+					}
+				})
+		}
+		function soalnext(e,lm) {
+			$("#loginform").hide();
+			$("#home").html("<p><h1>SOAL</h1></p>");
+			window.localStorage.setItem("id_ujian", e);
+			var limit = window.localStorage.getItem("limit");
+			var NIM = window.localStorage.getItem("NIM");
+			$.ajax({
+					type : "POST",
+					url  : "http://localhost/kasih/tabel_ujian1.php?",
+					data : "id_ujian="+e+"&limit="+lm+"&NIM="+NIM,
+					success : function(data){
+						$("#tabel_ujian").html(data);
+					},
+					error : function(){
+						alert();
+					}
+				})
+		}
+		function soalprev(e,lm) {
+			//$("#back1").show();
+			$("#loginform").hide();
+			$("#home").html("<p><h1>SOAL</h1></p>");
+			window.localStorage.setItem("id_ujian", e);
+			var limit = window.localStorage.getItem("limit");
+			var NIM = window.localStorage.getItem("NIM");
+			var next = (Number(limit)+1) - 1;
+			//alert(e);
+			//alert(limit);
+			//alert(NIM);
+			$.ajax({
+					type : "POST",
+					url  : "http://localhost/kasih/tabel_ujian1.php?",
+					data : "id_ujian="+e+"&limit="+lm+"&NIM="+NIM,
+					success : function(data){
+						$("#tabel_ujian").html(data);
+					},
+					error : function(){
+						alert();
+					}
+				})
+		}
+		function simpan_jawaban(e,lm) {
+			var jawaban = $("#jawaban").val();
+			if (jawaban == ""){
+				$("#jawaban").focus();
+				return false;
+			}
+			else {
+				$("#back1").show();
+				$("#loginform").hide();
+				var id_ujian = window.localStorage.getItem("id_ujian");
+				var NIM = window.localStorage.getItem("NIM");
+				
+				//alert(NIM);
+				$.ajax({
+						type : "POST",
+						url  : "http://localhost/kasih/simpan_jawaban.php?",
+						data : "id_soal="+e+"&id_ujian="+id_ujian+"&NIM="+NIM+"&jawaban="+jawaban,
+						success : function(data){
+							soalnext(id_ujian,lm);
+						},
+						error : function(){
+							alert();
+						}
+				})
+			}
+		}
+		function simpan_jawaban1(lm) {
+			var jawaban = $("#jawaban").val();
+			if (jawaban == ""){
+				$("#jawaban").focus();
+				return false;
+			}
+			else {
+				$("#back1").show();
+				$("#loginform").hide();
+				var id_ujian = window.localStorage.getItem("id_ujian");
+				var NIM = window.localStorage.getItem("NIM");
+				
+				//alert(NIM);
+				$.ajax({
+						type : "POST",
+						url  : "http://localhost/kasih/simpan_jawaban.php?",
+						data : "id_soal="+lm+"&id_ujian="+id_ujian+"&NIM="+NIM+"&jawaban="+jawaban,
+						success : function(data){
+							//soalnext(id_ujian,lm);
+						},
+						error : function(){
+							//alert();
+						}
+				})
+			}
+		}
+		function starttime(jam,menit){
+			window.localStorage.setItem("statusTime", "mulai");
+			var statusTime = window.localStorage.getItem("statusTime");
+			//alert(statusTime);
+			if (statusTime=="mulai"){
+				var hou = jam;
+				var min = menit;
+				document.getElementById("timer").innerHTML ="<p><h1>Waktu : "+ hou +" jam : " + min + " menit</h1></p>";
+				//var timerId = 0;
+				var timerId =setInterval(function(){
+				var a = new Date();
+					if (min == 0){
+						hou--;
+						min = 60;
+						
+					}
+					min--;
+					document.getElementById("timer").innerHTML ="<p><h1>Waktu : "+ hou +" jam : " + min + " menit</h1></p>";
+					if(min == 00)
+					{
+						hou--;
+						min = 60;
+						if(hou  < 0)
+							{
+								window.localStorage.setItem("statusTime", "selesai");
+								document.getElementById("timer").innerHTML ="<p><h1>Waktu : "+ 0 +" jam : " + 0 + " menit</h1></p>";
+								var id_ujian = window.localStorage.getItem("id_ujian");
+								var NIM = window.localStorage.getItem("NIM");
+								clearInterval(timerId);
+								$("#back1").show();
+								$("#timer").hide();
+								$("#tabel_ujian").html("Ujian telah berakhir, sistem telah menyimpan semua jawaban.<br>Terimakasih.");
+								
+								$.ajax({
+										type : "POST",
+										url  : "http://localhost/kasih/simpan_logujian.php?",
+										data : "id_soal="+e+"&id_ujian="+id_ujian+"&NIM="+NIM+"&jawaban="+jawaban,
+										success : function(data){
+											$("#back1").show();
+											$("#timer").hide();
+											$("#tabel_ujian").html("Ujian telah berakhir, sistem telah menyimpan semua jawaban.<br>Terimakasih.");
+										},
+										error : function(){
+											alert();
+										}
+								})
+								
+								//
+							}
+					}
+					
+				},1000);
+			}
+		}
+		function selesai_ujian(e,lm) {
+		//clearInterval(timerId);
+		window.localStorage.setItem("statusTime", "selesai");
+		$("#back1").show();
+		var pilih = confirm("Apakah Anda yakin menyelesaikan ujian ini ?");
+				if (pilih == true) {
+							var NIM = window.localStorage.getItem("NIM");
+							
+							//alert(NIM);
+							$.ajax({
+									type : "POST",
+									url  : "http://localhost/kasih/simpan_logujian.php?",
+									data : "id_ujian="+e+"&NIM="+NIM,
+									success : function(data){
+										//$("#timer").remove();
+										$("#timer").hide();
+										simpan_jawaban1(lm);
+										$("#tabel_ujian").html("Ujian telah berakhir, sistem telah menyimpan semua jawaban.<br>Terimakasih.");
+									},
+									error : function(){
+										alert();
+									}
+							})
+			}
+		}
+	</script>
+	<script>
+		new WOW().init();
+		 
+		$body = $("body");
+
+		$(document).on({
+			ajaxStart: function() { $body.addClass("loading");    },
+			 ajaxStop: function() { $body.removeClass("loading"); }    
+		});
+		
+	</script>
+	<style>
+	.modal {
+			display:    none;
+			position:   fixed;
+			z-index:    1000;
+			top:        0;
+			left:       0;
+			height:     100%;
+			width:      100%;
+			background: rgba( 255, 255, 255, .8 ) 
+						url('loading2.gif') 
+						50% 50% 
+						no-repeat;
+		}
+
+		/* When the body has the loading class, we turn
+		   the scrollbar off with overflow:hidden */
+		body.loading {
+			overflow: hidden;   
+		}
+
+		/* Anytime the body has the loading class, our
+		   modal element will be visible */
+		body.loading .modal {
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		CBT STT DUMAI
+	</div>
+		<div id="back1">
+			<a onclick="return main();"><input type="image" id="back" src="img/back.png"></a>
+		</div>
+	<div class="konten">
+		<div id="home">
+			<p><h1>SELAMAT DATANG</h1></p>
+			<div></div>
+		</div>
+		<div id="timer">
+		
+		</div>
+		<div id="loginform">
+			<div class="loginbox">
+				<div class="loginboxinner radius">
+					<div class="loginheader">
+						<h1 class="title">Login</h1>
+						<div class="logo"><img src="img/sttd med.png" /></div>
+					</div><!--loginheader-->
+					<div class="loginform">
+							<p>
+								<label for="NIM" class="bebas">NIM</label>
+								<input type="text" id="NIM" name="NIM" value="" required class="radius2" />
+							</p>
+							<p>
+								<label for="password" class="bebas">Password</label>
+								<input type="password" id="password" name="password" required class="radius2" />
+							</p>
+							<p>
+								<button class="radius title" id="login" onclick="return tampil_soal()">Login</button>
+							</p>
+					</div><!--loginform-->
+				</div><!--loginboxinner-->
+			</div><!--loginbox-->
+
+		</div>
+		<div id="tabel_ujian">
+		
+		</div>
+	<div>
+	<div class="footer">
+		@2016 STT DUMAI
+	</div>
+	<div class="modal"></div>
+</body>
+</html>
