@@ -98,7 +98,7 @@
 			var password = window.localStorage.getItem("password");
 			$.ajax({
 					type : "POST",
-					url  : "http://192.168.88.6/kasih/login_andro.php?",
+					url  : "http://192.168.88.7/kasih/login_andro.php?",
 					data : "NIM="+NIM+"&password="+password,
 					success : function(data){
 						if (data == "ada") {
@@ -121,7 +121,7 @@
 			var NIM = window.localStorage.getItem("NIM");
 			$("#home").html("<p><h1>DAFTAR UJIAN</h1></p>");
 			$.ajax({
-					url  : "http://192.168.88.6/kasih/tabel_jadwal.php?",
+					url  : "http://192.168.88.7/kasih/tabel_jadwal.php?",
 					success : function(data){
 						$("#tabel_ujian").html(data);
 					},
@@ -142,7 +142,7 @@
 			var NIM = window.localStorage.getItem("NIM");
 			$.ajax({
 					type : "POST",
-					url  : "http://192.168.88.6/kasih/tabel_ujian1.php?",
+					url  : "http://192.168.88.7/kasih/tabel_ujian1.php?",
 					data : "id_ujian="+e+"&limit="+limit+"&NIM="+NIM,
 					success : function(data){
 						$("#tabel_ujian").html(data);
@@ -161,7 +161,7 @@
 			var NIM = window.localStorage.getItem("NIM");
 			$.ajax({
 					type : "POST",
-					url  : "http://192.168.88.6/kasih/tabel_ujian1.php?",
+					url  : "http://192.168.88.7/kasih/tabel_ujian1.php?",
 					data : "id_ujian="+e+"&limit="+lm+"&NIM="+NIM,
 					success : function(data){
 						$("#tabel_ujian").html(data);
@@ -184,7 +184,7 @@
 			//alert(NIM);
 			$.ajax({
 					type : "POST",
-					url  : "http://192.168.88.6/kasih/tabel_ujian1.php?",
+					url  : "http://192.168.88.7/kasih/tabel_ujian1.php?",
 					data : "id_ujian="+e+"&limit="+lm+"&NIM="+NIM,
 					success : function(data){
 						$("#tabel_ujian").html(data);
@@ -209,7 +209,7 @@
 				//alert(NIM);
 				$.ajax({
 						type : "POST",
-						url  : "http://192.168.88.6/kasih/simpan_jawaban.php?",
+						url  : "http://192.168.88.7/kasih/simpan_jawaban.php?",
 						data : "id_soal="+e+"&id_ujian="+id_ujian+"&NIM="+NIM+"&jawaban="+jawaban,
 						success : function(data){
 							soalnext(id_ujian,lm);
@@ -235,7 +235,7 @@
 				//alert(NIM);
 				$.ajax({
 						type : "POST",
-						url  : "http://192.168.88.6/kasih/simpan_jawaban.php?",
+						url  : "http://192.168.88.7/kasih/simpan_jawaban.php?",
 						data : "id_soal="+lm+"&id_ujian="+id_ujian+"&NIM="+NIM+"&jawaban="+jawaban,
 						success : function(data){
 							//soalnext(id_ujian,lm);
@@ -281,7 +281,7 @@
 								
 								$.ajax({
 										type : "POST",
-										url  : "http://192.168.88.6/kasih/simpan_logujian.php?",
+										url  : "http://192.168.88.7/kasih/simpan_logujian.php?",
 										data : "id_soal="+e+"&id_ujian="+id_ujian+"&NIM="+NIM+"&jawaban="+jawaban,
 										success : function(data){
 											$("#back1").show();
@@ -311,7 +311,7 @@
 							//alert(NIM);
 							$.ajax({
 									type : "POST",
-									url  : "http://192.168.88.6/kasih/simpan_logujian.php?",
+									url  : "http://192.168.88.7/kasih/simpan_logujian.php?",
 									data : "id_ujian="+e+"&NIM="+NIM,
 									success : function(data){
 										//$("#timer").remove();
